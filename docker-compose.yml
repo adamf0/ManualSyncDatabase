@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  sync_simak:
+    build: .
+    image: sync_simak:1.0.0
+    container_name: sync_simak
+    environment:
+      ConnectionString__SIMAK: "root:@tcp(remote-db:3306)/sync_db"
+      ConnectionString__SOURCE: "root:251423@tcp(db_sync:3307)/sync_simak"  
+    ports:
+      - "81:8080"
+    extra_hosts:
+      - "remote-db:172.16.20.135"
+
+  db_sync:
+    image: mariadb:latest
+    container_name: db_sync
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 251423
+      MYSQL_DATABASE: sync_simak
+    command: >
+      --log-bin=mysql-bin
+      --binlog-format=ROW
+      --server-id=10
+      --binlog-row-image=FULL
+    ports:
+      - "3307:3306"
