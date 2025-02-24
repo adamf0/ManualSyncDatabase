@@ -6,12 +6,12 @@ services:
     image: sync_simak:1.0.0
     container_name: sync_simak
     environment:
-      ConnectionString__SIMAK: "root:@tcp(remote-db:3306)/sync_db"
+      ConnectionString__SIMAK: "host2:host22017@tcp(remote-db:30130)/unpak_simak"
       ConnectionString__SOURCE: "root:251423@tcp(db_sync:3307)/sync_simak"  
     ports:
       - "81:8080"
     extra_hosts:
-      - "remote-db:172.16.20.135"
+      - "remote-db:172.16.21.3"
 
   db_sync:
     image: mariadb:latest
