@@ -17,6 +17,11 @@ services:
       - "3307:3306"
     networks:
       - sample
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
 
   # db_simpeg:
   #   image: mariadb:latest
