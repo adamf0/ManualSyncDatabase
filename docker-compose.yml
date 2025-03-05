@@ -18,22 +18,22 @@ services:
     networks:
       - sample
 
-  db_simpeg:
-    image: mariadb:latest
-    container_name: db_simpeg
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: 251423
-      MYSQL_DATABASE: sync_simpeg
-    command: >
-      --log-bin=mysql-bin
-      --binlog-format=ROW
-      --server-id=20
-      --binlog-row-image=FULL
-    ports:
-      - "3308:3306"
-    networks:
-      - sample
+  # db_simpeg:
+  #   image: mariadb:latest
+  #   container_name: db_simpeg
+  #   restart: always
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: 251423
+  #     MYSQL_DATABASE: sync_simpeg
+  #   command: >
+  #     --log-bin=mysql-bin
+  #     --binlog-format=ROW
+  #     --server-id=20
+  #     --binlog-row-image=FULL
+  #   ports:
+  #     - "3308:3306"
+  #   networks:
+  #     - sample
 
   sync_simak:
     build: Sync/.
@@ -52,22 +52,22 @@ services:
     networks:
       - sample
 
-  sync_simpeg:
-    build: Sync/.
-    image: adamilkom00/sync:1.0.1
-    container_name: sync_simpeg
-    depends_on:
-      db_simpeg:
-        condition: service_healthy
-    environment:
-      ConnectionString__SOURCE: "simpegunpak:simp3gunp4k2017@tcp(remote-simpeg:3306)/unpak_simpeg"
-      ConnectionString__TARGET: "root:251423@tcp(db_simpeg:3306)/sync_simpeg?charset=utf8mb4&parseTime=True&loc=Local"
-    ports:
-      - "82:8080"
-    extra_hosts:
-      - "remote-simpeg:172.16.20.245"
-    networks:
-      - sample
+  # sync_simpeg:
+  #   build: Sync/.
+  #   image: adamilkom00/sync:1.0.1
+  #   container_name: sync_simpeg
+  #   depends_on:
+  #     db_simpeg:
+  #       condition: service_healthy
+  #   environment:
+  #     ConnectionString__SOURCE: "simpegunpak:simp3gunp4k2017@tcp(remote-simpeg:3306)/unpak_simpeg"
+  #     ConnectionString__TARGET: "root:251423@tcp(db_simpeg:3306)/sync_simpeg?charset=utf8mb4&parseTime=True&loc=Local"
+  #   ports:
+  #     - "82:8080"
+  #   extra_hosts:
+  #     - "remote-simpeg:172.16.20.245"
+  #   networks:
+  #     - sample
 
 networks:
   sample:
