@@ -6,7 +6,7 @@ services:
     image: adamilkom00/sync:1.0.1
     container_name: sync_simak
     depends_on:
-      db_simak:
+      - db_simak
         #condition: service_healthy  # Tunggu sampai DB siap
     environment:
       ConnectionString__SOURCE: "host2:host22017@tcp(remote-simak:30130)/unpak_simak"
