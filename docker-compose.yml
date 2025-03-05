@@ -7,7 +7,7 @@ services:
     container_name: sync_simak
     depends_on:
       db_simak:
-        condition: service_healthy  # Tunggu sampai DB siap
+        #condition: service_healthy  # Tunggu sampai DB siap
     environment:
       ConnectionString__SOURCE: "host2:host22017@tcp(remote-simak:30130)/unpak_simak"
       ConnectionString__TARGET: "root:251423@tcp(db_simak:3306)/sync_simak"  
