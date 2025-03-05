@@ -40,7 +40,8 @@ services:
     image: adamilkom00/sync:1.0.1
     container_name: sync_simak
     depends_on:
-      - db_simak
+      db_simak:
+        condition: service_healthy
     environment:
       ConnectionString__SOURCE: "host2:host22017@tcp(remote-simak:30130)/unpak_simak"
       ConnectionString__TARGET: "root:251423@tcp(db_simak:3306)/sync_simak?charset=utf8mb4&parseTime=True&loc=Local"
@@ -56,7 +57,8 @@ services:
     image: adamilkom00/sync:1.0.1
     container_name: sync_simpeg
     depends_on:
-      - db_simpeg
+      db_simpeg:
+        condition: service_healthy
     environment:
       ConnectionString__SOURCE: "simpegunpak:simp3gunp4k2017@tcp(remote-simpeg:3306)/unpak_simpeg"
       ConnectionString__TARGET: "root:251423@tcp(db_simpeg:3306)/sync_simpeg?charset=utf8mb4&parseTime=True&loc=Local"
