@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/go-sql-driver/mysql"
@@ -14,18 +15,18 @@ import (
 	"gorm.io/gorm"
 )
 
-var dbSimak *sql.DB
+var dbSource *sql.DB
 var dbSinkron *gorm.DB
 
 func init() {
 	var err error
 
 	// Load environment variables
-	dbSimakDSN := os.Getenv("ConnectionString__SIMAK")
-	dbSinkronDSN := os.Getenv("ConnectionString__SOURCE")
+	dbSourceDSN := os.Getenv("ConnectionString__SOURCE")
+	dbSinkronDSN := os.Getenv("ConnectionString__TARGET")
 
-	// Koneksi ke database simak (source)
-	dbSimak, err = sql.Open("mysql", dbSimakDSN)
+	// Koneksi ke database source
+	dbSource, err = sql.Open("mysql", dbSourceDSN)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,7 +42,7 @@ func init() {
 func syncTable(c *fiber.Ctx) error {
 	tbName := c.Params("tb_name")
 
-	// Ambil struktur tabel dari simak
+	// Ambil struktur tabel dari source
 	columns, primaryKey, err := getTableStructure(tbName)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
@@ -65,7 +66,7 @@ func syncTable(c *fiber.Ctx) error {
 // Fungsi untuk mendapatkan struktur tabel
 func getTableStructure(table string) (map[string]string, string, error) {
 	query := fmt.Sprintf("DESCRIBE %s", table)
-	rows, err := dbSimak.Query(query)
+	rows, err := dbSource.Query(query)
 	if err != nil {
 		return nil, "", err
 	}
@@ -158,7 +159,7 @@ func syncTableData(table string, columns map[string]string, primaryKey string) e
 	columnList := strings.Join(columnNames, ", ")
 
 	query := fmt.Sprintf("SELECT %s FROM %s", columnList, table)
-	rows, err := dbSimak.Query(query)
+	rows, err := dbSource.Query(query)
 	if err != nil {
 		return err
 	}
