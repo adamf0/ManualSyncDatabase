@@ -9,7 +9,7 @@ services:
       - db_simak
     environment:
       ConnectionString__SOURCE: "host2:host22017@tcp(remote-simak:30130)/unpak_simak"
-      ConnectionString__TARGET: "root:251423@tcp(host.docker.internal:3307)/sync_simak"  
+      ConnectionString__TARGET: "root:251423@tcp(localhost:3307)/sync_simak"  
     ports:
       - "81:8080"
     extra_hosts:
@@ -23,7 +23,7 @@ services:
       - db_simpeg
     environment:
       ConnectionString__SOURCE: "simpegunpak:simp3gunp4k2017@tcp(remote-simpeg:3306)/unpak_simpeg"
-      ConnectionString__TARGET: "root:251423@tcp(host.docker.internal:3308)/sync_simpeg"  
+      ConnectionString__TARGET: "root:251423@tcp(localhost:3308)/sync_simpeg"  
     ports:
       - "82:8080"
     extra_hosts:
