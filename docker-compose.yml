@@ -3,7 +3,7 @@ version: '3.8'
 services:
   sync_simak:
     build: Sync/.
-    image: sync:1.0.0
+    image: adamilkom00/sync:1.0.1
     container_name: sync_simak
     environment:
       ConnectionString__SOURCE: "host2:host22017@tcp(remote-simak:30130)/unpak_simak"
@@ -15,7 +15,7 @@ services:
 
   sync_simpeg:
     build: Sync/.
-    image: sync:1.0.0
+    image: adamilkom00/sync:1.0.1
     container_name: sync_simpeg
     environment:
       ConnectionString__SOURCE: "simpegunpak:simp3gunp4k2017@tcp(remote-simpeg:3306)/unpak_simpeg"

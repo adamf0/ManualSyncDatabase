@@ -2,7 +2,7 @@
 FROM golang:1.24-alpine
 
 # Install dependencies yang diperlukan
-RUN apk add --no-cache git gcc g++ make
+#RUN apk add --no-cache git gcc g++ make
 
 # Set working directory dalam container
 WORKDIR /app
