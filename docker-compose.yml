@@ -46,8 +46,6 @@ services:
       ConnectionString__TARGET: "root:251423@tcp(db_simak:3307)/sync_simak"  
     ports:
       - "81:8080"
-    depends_on:
-      - db_simak
     extra_hosts:
       - "remote-simak:172.16.21.3"
     networks:
