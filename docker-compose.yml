@@ -5,9 +5,11 @@ services:
     build: Sync/.
     image: adamilkom00/sync:1.0.1
     container_name: sync_simak
+    depends_on:
+      - db_simak
     environment:
       ConnectionString__SOURCE: "host2:host22017@tcp(remote-simak:30130)/unpak_simak"
-      ConnectionString__TARGET: "root:251423@tcp(db_simak:3307)/sync_simak"  
+      ConnectionString__TARGET: "root:251423@tcp(db_simak:3306)/sync_simak"  
     ports:
       - "81:8080"
     extra_hosts:
@@ -17,9 +19,11 @@ services:
     build: Sync/.
     image: adamilkom00/sync:1.0.1
     container_name: sync_simpeg
+    depends_on:
+      - db_simpeg
     environment:
       ConnectionString__SOURCE: "simpegunpak:simp3gunp4k2017@tcp(remote-simpeg:3306)/unpak_simpeg"
-      ConnectionString__TARGET: "root:251423@tcp(db_simpeg:3308)/sync_simpeg"  
+      ConnectionString__TARGET: "root:251423@tcp(db_simpeg:3306)/sync_simpeg"  
     ports:
       - "82:8080"
     extra_hosts:
@@ -46,7 +50,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 251423
-      MYSQL_DATABASE: sync_simak
+      MYSQL_DATABASE: sync_simpeg
     command: >
       --log-bin=mysql-bin
       --binlog-format=ROW
