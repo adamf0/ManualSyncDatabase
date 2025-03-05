@@ -2,12 +2,14 @@ version: '3.8'
 
 services:
   db_simak:
-    image: mariadb:latest
+    image: mysql:latest
     container_name: db_simak
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 251423
       MYSQL_DATABASE: sync_simak
+      MYSQL_USER: sync_user
+      MYSQL_PASSWORD: 251423
     command: >
       --log-bin=mysql-bin
       --binlog-format=ROW
