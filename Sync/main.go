@@ -40,6 +40,23 @@ func init() {
 	}
 }
 
+func convertColumnType(colType string) string {
+	colTypeLower := strings.ToLower(colType)
+	switch {
+	case strings.Contains(colTypeLower, "enum"),
+		strings.Contains(colTypeLower, "date"),
+		strings.Contains(colTypeLower, "timestamp"),
+		strings.Contains(colTypeLower, "time"),
+		strings.Contains(colTypeLower, "datetime"),
+		strings.Contains(colTypeLower, "char"):
+		return "VARCHAR(255)"
+	case strings.Contains(colTypeLower, "json"):
+		return "TEXT"
+	default:
+		return colType
+	}
+}
+
 // Handler untuk sinkronisasi tabel
 func syncTable(c *fiber.Ctx) error {
 	tbName := c.Params("tb_name")
@@ -83,7 +100,7 @@ func getTableStructure(table string) (map[string]string, string, error) {
 		if err := rows.Scan(&field, &colType, &null, &key, &defaultVal, &extra); err != nil {
 			return nil, "", err
 		}
-		columns[field] = colType
+		columns[field] = convertColumnType(colType)
 
 		// Simpan Primary Key jika ada
 		if key == "PRI" {
