@@ -48,7 +48,7 @@ func convertColumnType(colType string) string {
 		strings.Contains(colTypeLower, "timestamp"),
 		strings.Contains(colTypeLower, "time"),
 		strings.Contains(colTypeLower, "datetime"),
-		strings.Contains(colTypeLower, "char")
+		strings.Contains(colTypeLower, "char"),
 		strings.Contains(colTypeLower, "int"):
 		return "VARCHAR(255)"
 	case strings.Contains(colTypeLower, "json"):
