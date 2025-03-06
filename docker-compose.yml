@@ -29,7 +29,7 @@ services:
 
   sync_simak:
     # build: Sync/.
-    image: sync:1.0.2
+    image: adamilkom00/sync:1.0.2
     container_name: sync_simak
     depends_on:
       - db_target
@@ -45,7 +45,7 @@ services:
 
   sync_simpeg:
     # build: Sync/.
-    image: sync:1.0.2
+    image: adamilkom00/sync:1.0.2
     container_name: sync_simpeg
     depends_on:
       - db_target
