@@ -24,6 +24,8 @@ func init() {
 	// Load environment variables
 	dbSourceDSN := os.Getenv("ConnectionString__SOURCE")
 	dbSinkronDSN := os.Getenv("ConnectionString__TARGET")
+	// dbSourceDSN := "root:@tcp(localhost:3306)/sync_db?charset=utf8mb4&parseTime=True&loc=Local"
+	// dbSinkronDSN := "root:251423@tcp(host.docker.internal:3307)/sync_simak?charset=utf8mb4&parseTime=True&loc=Local"
 
 	// Koneksi ke database source
 	dbSource, err = sql.Open("mysql", dbSourceDSN)
@@ -119,6 +121,8 @@ func adjustTableStructure(table string, columns map[string]string, primaryKey st
 
 	if len(alterQueries) > 0 {
 		alterQuery := fmt.Sprintf("ALTER TABLE %s %s", table, strings.Join(alterQueries, ", "))
+		log.Println(alterQuery)
+
 		if err := dbSinkron.Exec(alterQuery).Error; err != nil {
 			return err
 		}
@@ -196,20 +200,37 @@ func syncTableData(table string, columns map[string]string, primaryKey string) e
 
 			var count int
 			checkQuery := fmt.Sprintf("SELECT COUNT(*) FROM %s WHERE %s = ?", table, primaryKey)
+			log.Println(checkQuery)
+			log.Println(values[0])
+
 			if err := tx.Raw(checkQuery, values[0]).Scan(&count).Error; err != nil {
 				log.Println(err)
 				return
 			}
 
+			log.Println(count)
 			if count == 0 {
 				insertQuery := fmt.Sprintf("INSERT INTO %s (%s) VALUES (%s)", table, columnList, strings.Repeat("?, ", len(columnNames)-1)+"?")
+				log.Println(insertQuery)
+				log.Println(values)
+
 				if err := tx.Exec(insertQuery, values...).Error; err != nil {
 					log.Println(err)
 					return
 				}
 			} else {
-				updateQuery := fmt.Sprintf("UPDATE %s SET %s WHERE %s = ?", table, columnList, primaryKey)
-				if err := tx.Exec(updateQuery, values...).Error; err != nil {
+				updateFields := []string{}
+				for col := range columns {
+					if col != primaryKey {
+						updateFields = append(updateFields, fmt.Sprintf("%s = ?", col))
+					}
+				}
+				updateQuery := fmt.Sprintf("UPDATE %s SET %s WHERE %s = ?", table, strings.Join(updateFields, ", "), primaryKey)
+				valuesToUpdate := append(values[1:], values[0]) // Primary key harus ada di akhir
+				log.Println(updateQuery)
+				log.Println(valuesToUpdate)
+
+				if err := tx.Exec(updateQuery, valuesToUpdate...).Error; err != nil {
 					log.Println(err)
 					return
 				}
@@ -220,11 +241,17 @@ func syncTableData(table string, columns map[string]string, primaryKey string) e
 	}
 
 	wg.Wait()
+	
 	return nil
+}
+
+func hello(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{"message": "hello world"})
 }
 
 func main() {
 	app := fiber.New()
+	app.Get("/", hello)
 	app.Get("/sync/:tb_name", syncTable)
 	log.Fatal(app.Listen(":3000"))
 }

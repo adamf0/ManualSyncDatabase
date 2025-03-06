@@ -1,22 +1,24 @@
 version: '3.8'
 
 services:
-  db_simak:
-    image: mysql:latest
-    container_name: db_simak
+  db_target:
+    image: mariadb:latest
+    container_name: db_target
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 251423
-      MYSQL_DATABASE: sync_simak
-      MYSQL_USER: sync_simak
-      MYSQL_PASSWORD: 251423
+      MYSQL_DATABASE: sync_target
     command: >
+      --port=3307
       --log-bin=mysql-bin
       --binlog-format=ROW
       --server-id=10
       --binlog-row-image=FULL
     ports:
-      - "3307:3306"
+      - "3308:3307"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d
     networks:
       - sample
     healthcheck:
@@ -25,35 +27,33 @@ services:
       retries: 5
       timeout: 5s
 
-  # db_simpeg:
-  #   image: mariadb:latest
-  #   container_name: db_simpeg
-  #   restart: always
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: 251423
-  #     MYSQL_DATABASE: sync_simpeg
-  #   command: >
-  #     --log-bin=mysql-bin
-  #     --binlog-format=ROW
-  #     --server-id=20
-  #     --binlog-row-image=FULL
-  #   ports:
-  #     - "3308:3306"
-  #   networks:
-  #     - sample
-
   sync_simak:
     build: Sync/.
-    image: adamilkom00/sync:1.0.1
+    image: sync:1.0.2
     container_name: sync_simak
     depends_on:
-      db_simak:
-        condition: service_healthy
+      - db_target
     environment:
-      ConnectionString__SOURCE: "host2:host22017@tcp(remote-simak:30130)/unpak_simak"
-      ConnectionString__TARGET: "root:251423@tcp(db_simak:3306)/sync_simak?charset=utf8mb4&parseTime=True&loc=Local"
+      ConnectionString__SOURCE: "host2:host22017@tcp(remote-simak:30130)/unpak_simak?charset=utf8mb4&parseTime=True&loc=Local"
+      ConnectionString__TARGET: "root:251423@tcp(db_target:3307)/sync_target?charset=utf8mb4&parseTime=True&loc=Local"
     ports:
-      - "81:8080"
+      - "81:3000"
+    extra_hosts:
+      - "remote-simak:172.16.21.3"
+    networks:
+      - sample
+
+  sync_simpeg:
+    build: Sync/.
+    image: sync:1.0.2
+    container_name: sync_simpeg
+    depends_on:
+      - db_target
+    environment:
+      ConnectionString__SOURCE: "host2:host22017@tcp(remote-simak:30130)/unpak_simak?charset=utf8mb4&parseTime=True&loc=Local"
+      ConnectionString__TARGET: "root:251423@tcp(db_target:3307)/sync_target?charset=utf8mb4&parseTime=True&loc=Local"
+    ports:
+      - "82:3000"
     extra_hosts:
       - "remote-simak:172.16.21.3"
     networks:
@@ -61,16 +61,16 @@ services:
 
   # sync_simpeg:
   #   build: Sync/.
-  #   image: adamilkom00/sync:1.0.1
+  #   image: sync:1.0.2
   #   container_name: sync_simpeg
   #   depends_on:
-  #     db_simpeg:
-  #       condition: service_healthy
+  #     - db_target
+  #       # condition: service_healthy
   #   environment:
   #     ConnectionString__SOURCE: "simpegunpak:simp3gunp4k2017@tcp(remote-simpeg:3306)/unpak_simpeg"
-  #     ConnectionString__TARGET: "root:251423@tcp(db_simpeg:3306)/sync_simpeg?charset=utf8mb4&parseTime=True&loc=Local"
+  #     ConnectionString__TARGET: "root:251423@tcp(db_target:3307)/sync_target?charset=utf8mb4&parseTime=True&loc=Local"
   #   ports:
-  #     - "82:8080"
+  #     - "82:3000"
   #   extra_hosts:
   #     - "remote-simpeg:172.16.20.245"
   #   networks:
