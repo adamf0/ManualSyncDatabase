@@ -28,7 +28,7 @@ services:
       timeout: 5s
 
   sync_simak:
-    build: Sync/.
+    # build: Sync/.
     image: sync:1.0.2
     container_name: sync_simak
     depends_on:
@@ -44,7 +44,7 @@ services:
       - sample
 
   sync_simpeg:
-    build: Sync/.
+    # build: Sync/.
     image: sync:1.0.2
     container_name: sync_simpeg
     depends_on:
