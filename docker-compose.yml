@@ -50,7 +50,7 @@ services:
     depends_on:
       - db_target
     environment:
-      ConnectionString__SOURCE: "host2:host22017@tcp(remote-simak:30130)/unpak_simak?charset=utf8mb4&parseTime=True&loc=Local"
+      ConnectionString__SOURCE: "simpegunpak:simp3gunp4k2017@tcp(remote-simpeg:3306)/unpak_simpeg?charset=utf8mb4&parseTime=True&loc=Local"
       ConnectionString__TARGET: "root:251423@tcp(db_target:3307)/sync_target?charset=utf8mb4&parseTime=True&loc=Local"
     ports:
       - "82:3000"
