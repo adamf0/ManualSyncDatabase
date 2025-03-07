@@ -55,7 +55,7 @@ services:
     ports:
       - "82:3000"
     extra_hosts:
-      - "remote-simak:172.16.21.3"
+      - "remote-simpeg:172.16.20.245"
     networks:
       - sample
 
